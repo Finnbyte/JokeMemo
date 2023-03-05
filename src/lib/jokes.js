@@ -4,7 +4,8 @@ export class Jokes {
         { name: "misc", enabled: true },
         { name: "pun", enabled: true },
         { name: "spooky", enabled: true },
-        { name: "christmas", enabled: true }]
+        { name: "christmas", enabled: true }
+    ]
     history = { entries: [], index: 0 };
     showDarkJokes = false;
 
