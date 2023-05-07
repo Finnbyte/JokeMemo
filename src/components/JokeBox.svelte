@@ -1,4 +1,8 @@
 <script>
+// Icons 
+import FaChevronLeft from 'svelte-icons/fa/FaChevronLeft.svelte';
+import FaChevronRight from 'svelte-icons/fa/FaChevronRight.svelte';
+
 import axios from "axios";
 import { onMount } from "svelte";
 import { Jokes } from "../lib/jokes";
@@ -18,8 +22,8 @@ onMount(async () => {
     }
 })
 
-// URL depends on if user wants dark jokes
-$: url = !jokes.showDarkJokes ? `https://v2.jokeapi.dev/joke/${enabledCategories}` : `https://v2.jokeapi.dev/joke/${enabledCategories},dark`
+// URL depends on enabled categories
+$: url = `https://v2.jokeapi.dev/joke/${enabledCategories}`
 
 const fetchNewJoke = async () => {
     if (enabledCategories.length !== 0) {
@@ -63,6 +67,7 @@ const handleClearHistory = () => {
 
 const handleCategoryChange = (index) => {
     jokes = jokes.toggleCategory(index)
+    jokes.saveToCookies()
 }
 
 </script>
@@ -71,30 +76,35 @@ const handleCategoryChange = (index) => {
     <div class="jokeContainer">
         <div class="jokeDisplayBox">
             {#if currentJoke}
-                <p>{jokes.format(currentJoke)}</p>
+                <div class="chevronContainer" on:click={handlePrev}>
+                </div>
+                <span class="chevron"><FaChevronLeft /></span>
+
+                <span>{jokes.format(currentJoke)}</span>
+
+                <div class="chevronContainer" on:click={handleNext}>
+                    <span class="chevron"><FaChevronRight/></span>
+                </div>
             {/if}
         </div>
 
-        <div class="jokeInfoBox">
-            {#if currentJoke}
-                <span>Your joke index is: {jokes.history.index} / {jokes.history.entries.length}</span>
-                <p>This joke is of category: {currentJoke.category}</p>
-            {:else}
-                <p>Loading...</p>
-            {/if}
+        <div class="jokeBoxPanel">
+            <div class="jokeInfoBox">
+                {#if currentJoke}
+                    <span>Your joke index is: {jokes.history.index} / {jokes.history.entries.length}</span><br/>
+                    <span>This joke is of category: {currentJoke.category}</span>
+                {:else}
+                    <p>Loading...</p>
+                {/if}
 
+            </div>
+
+            <div class="jokeBoxButtons">
+                <button on:click={handleClearHistory}>Clears history use with caution!</button>
+            </div>
         </div>
 
-
-
-        <div class="buttons">
-            <button on:click={handleNext}>Display next joke!</button>
-            <button on:click={handlePrev}>Display earlier joke!</button>
-            <button on:click={handleToggleDarkJokes}>Receive dark jokes. <span>{jokes.showDarkJokes}</span></button>
-            <button on:click={handleClearHistory}>Clears history use with caution!</button>
-        </div>
-
-        <div class="categories">
+        <div class="jokeBoxCategories">
             <h3>Categories:</h3>
             {#each jokes.categories as category, i}
                 <span><input type="checkbox" checked={category.enabled} on:change={() => handleCategoryChange(i)}><span>{category.name}</span></span>
@@ -105,13 +115,56 @@ const handleCategoryChange = (index) => {
 
 <style>
 .jokeDisplayBox {
-    background-color: gray;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    border-radius: 25px;
+    justify-content: space-between;
+    padding: 1.2% 0 1.2% 0;
+    height: 30vh;
+    border: 2px solid black;
+    background-color: rgba(255, 100, 100, 0.1);
+
 }
 
-.categories {
+.jokeDisplayBox span:hover {
+    cursor: pointer;
+    user-select: none;
+    pointer-events: auto;
+}
+
+.jokeBoxPanel {
+    padding-top: 1vh;
+    display: flex;
+}
+
+.jokeBoxPanel .jokeBoxButtons {
+    margin-left: auto
+}
+
+.jokeBoxCategories {
     display: inline-flex;
     align-items: center;
     gap: 15px;
     justify-content: center;
+}
+
+.chevronContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor:pointer;
+    padding: 0 1.2% 0 1.2%;
+    z-index: 999;
+    height: 100%;
+    width: 20%;
+}
+
+.chevron {
+    z-index: 999;
+    user-select: none;
+    cursor: none;
+    width: 32px;
+    height: 32px
 }
 </style>

@@ -1,13 +1,13 @@
 export class Jokes {
     categories = [
-        { name: "programming", enabled: true }, 
-        { name: "misc", enabled: true },
-        { name: "pun", enabled: true },
-        { name: "spooky", enabled: true },
-        { name: "christmas", enabled: true }
+        { name: "Programming", enabled: true }, 
+        { name: "Misc.", enabled: true },
+        { name: "Pun", enabled: true },
+        { name: "Spooky", enabled: true },
+        { name: "Christmas", enabled: true },
+        { name: "Dark", enabled: false }
     ]
     history = { entries: [], index: 0 };
-    showDarkJokes = false;
 
     /* Cookies */
     saveToCookies() {
@@ -77,11 +77,5 @@ export class Jokes {
 
         if (currentJoke.type === "single") return `${currentJoke.joke}`
         if (currentJoke.type === "twopart") return `${currentJoke.setup}\n\n${currentJoke.delivery}`
-    }
-
-    /* Dark jokes management */
-    toggleDarkJokes() {
-        this.showDarkJokes = !this.showDarkJokes;
-        return this
     }
 }
